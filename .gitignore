@@ -34,7 +34,8 @@ next-env.d.ts
 
 **/.terraform/*
 /infra/terraform/functions/layer/nodejs/**
-.terraform.lock.hcl
+/infra/terraform/.terraform.lock.hcl
 .terraform.tfstate.lock.info
 *.zip
-terraform.tfstate
+**/terraform.tfstate*
+infra/terraform/terraform.tfstate.backup
