@@ -23,3 +23,9 @@ data "aws_security_group" "default" {
     values = ["default"]
   }
 }
+
+
+data "aws_route53_zones" "sandbox_zone" {}
+
+
+

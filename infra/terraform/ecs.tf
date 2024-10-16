@@ -61,6 +61,16 @@ resource "aws_ecs_task_definition" "nextjs" {
     cpu       = 512
     memory    = 1024
     essential = true
+    environment = [
+      {
+        name  = "NEXT_PUBLIC_API_GATEWAY"
+        value = "${aws_apigatewayv2_api.http_api.api_endpoint}/${var.env}"
+      },
+      {
+        name  = "DYNAMO_DB_TABLE_PREFIX"
+        value = "BCS_Next-Product-Site"
+      }
+    ]
     portMappings = [{
       containerPort = 3000
       hostPort      = 3000
@@ -80,6 +90,12 @@ resource "aws_ecs_service" "my_service" {
     subnets          = data.aws_subnets.default.ids
     security_groups  = [data.aws_security_group.default.id]
     assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.ecs_tg.arn
+    container_name   = local.ecs_task_def
+    container_port   = 3000
   }
 }
 
