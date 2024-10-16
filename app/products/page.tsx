@@ -14,11 +14,14 @@ export default function Products() {
     async function fetchProducts() {
       setLoading(true);
       try {
-        const response = await fetch('/api/getData');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_GATEWAY}/products`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
         const products = await response.json();
         setData(products);
       } catch (error) {
-        setError('Failed to fetch products');
+        setError(error.message || 'Failed to fetch products');
       } finally {
         setLoading(false);
       }
@@ -57,19 +60,17 @@ export default function Products() {
         <div className='grid lg:max-w-5xl lg:w-full lg:grid-cols-2 lg:text-left'>
           {productData.map((product) => (
             <div
-              key={product.id.S}
+              key={product.id}
               className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
             >
-              <Link href={`/products/${product.id.S}`}>
-                {' '}
-                {/* Ensure you access the string value */}
-                <h3 className={`mb-3 text-2xl font-semibold`}>{product.name.S}</h3>
-                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Price: {product.price.N}</p>
-                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Description: {product.description.S}</p>
-                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Category: {product.category.S}</p>
-                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Rating: {product.rating.N}</p>
-                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Reviews: {product.numReviews.N}</p>
-                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Stock: {product.countInStock.N}</p>
+              <Link href={`/products/${product.id}`}>
+                <h3 className='mb-3 text-2xl font-semibold'>{product.name}</h3>
+                <p className='m-0 max-w-[30ch] text-sm opacity-50'>Price: {product.price}</p>
+                <p className='m-0 max-w-[30ch] text-sm opacity-50'>Description: {product.description}</p>
+                <p className='m-0 max-w-[30ch] text-sm opacity-50'>Category: {product.category}</p>
+                <p className='m-0 max-w-[30ch] text-sm opacity-50'>Rating: {product.rating}</p>
+                <p className='m-0 max-w-[30ch] text-sm opacity-50'>Reviews: {product.numReviews}</p>
+                <p className='m-0 max-w-[30ch] text-sm opacity-50'>Stock: {product.countInStock}</p>
               </Link>
             </div>
           ))}

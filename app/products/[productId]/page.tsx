@@ -10,16 +10,12 @@ const productDetail = ({ params }: { params: { productId: string } }) => {
     async function fetchProduct() {
       setLoading(true);
       try {
-        const response = await fetch(`/api/getData`);
-        const products = await response.json();
-
-        // Find the product by ID
-        const foundProduct = products.find((item: any) => item.id.S === params.productId);
-        if (!foundProduct) {
-          setError('Product not found');
-        } else {
-          setProduct(foundProduct);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_GATEWAY}/product?id=${params.productId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch product');
         }
+        const product = await response.json();
+        setProduct(product[0]);
       } catch (err) {
         setError('Failed to fetch product');
       } finally {
@@ -38,16 +34,20 @@ const productDetail = ({ params }: { params: { productId: string } }) => {
     return <p>{error}</p>;
   }
 
+  if (!product) {
+    return <p>No product found.</p>;
+  }
+
   return (
     <div className='flex min-h-screen flex-col p-24'>
       <h1 className='text-2xl font-semibold'>Product Description</h1>
-      <h3 className={`mb-3 text-xl `}>{product.name.S}</h3>
-      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Price: {product.price.N}</p>
-      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Description: {product.description.S}</p>
-      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Category: {product.category.S}</p>
-      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Rating: {product.rating.N}</p>
-      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Reviews: {product.numReviews.N}</p>
-      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Stock: {product.countInStock.N}</p>
+      <h3 className={`mb-3 text-xl `}>{product.name}</h3>
+      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Price: {product.price}</p>
+      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Description: {product.description}</p>
+      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Category: {product.category}</p>
+      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Rating: {product.rating}</p>
+      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Reviews: {product.numReviews}</p>
+      <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Stock: {product.countInStock}</p>
     </div>
   );
 };
